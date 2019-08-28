@@ -604,8 +604,29 @@ resource "aws_security_group" "inet_pub_vpc_sg" {
   
   #allow SSH connections from any IP.  Your bastion instance should be the instance host with a 
   ingress {
-    from_port = 22
+    from_port = 0
     to_port = 22
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  
+  ingress {
+    from_port = 0
+    to_port = 443
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  
+  ingress {
+    from_port = 0
+    to_port = 9033
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  
+  ingress {
+    from_port = 0
+    to_port = 10042
     protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -642,13 +663,47 @@ data "aws_ami" "ubuntu_server_ami" {
   owners = ["099720109477"] # Canonical
 }
 
+resource "aws_instance" "sms_host" {
+  ami           = var.sms_ami_id
+  instance_type = var.types.sms
+  key_name      = var.key_pair
+  vpc_security_group_ids = [aws_security_group.inet_pub_vpc_sg.id]
+  subnet_id = aws_subnet.inet_pub_sub.id
+  private_ip = var.inet_vpc.sms_private_ip
+  
+  tags = {
+    Name = format("%s - %s", var.unique_id, "SMS 5.2 instance")
+    Description = "SMS 5.2 instance"
+  }
+}
+
 resource "aws_instance" "bastion_host" {
+  depends_on = [aws_instance.sms_host]
   ami           = data.aws_ami.ubuntu_server_ami.id
   instance_type = var.types.bastion
   key_name = var.key_pair
   vpc_security_group_ids = [aws_security_group.inet_pub_vpc_sg.id]
   subnet_id = aws_subnet.inet_pub_sub.id
   source_dest_check = false
+  
+  provisioner "remote-exec" {
+    inline = [<<-EOF
+        curl -k -m 800 --connect-timeout 10 --retry 40 --retry-delay 15 --retry-connrefused -X GET --header "Accept: application/json" --header "X-SMS-API-KEY: ${var.sms_api_key}" "https://${aws_instance.sms_host.private_ip}/services/v1/dv_package?active=true&type=DV" 
+        sleep 20
+        echo "The SMS has started and is responding to API calls"
+      EOF
+    ]
+    
+    connection {
+      type = "ssh"
+      user = "ubuntu"
+      timeout = "2m"
+      host = aws_instance.bastion_host.public_ip
+      private_key = file(var.private_key_file)
+      agent = false
+    }
+  }
+  
   tags = {
     Name = format("%s - %s", var.unique_id, "Bastion instance")
     Description = "Bastion instance"
@@ -732,10 +787,10 @@ data "aws_ami" "cnp_ami" {
 }
 
 resource "aws_instance" "cnp_1" {
+  depends_on = [aws_instance.bastion_host]
   ami           = data.aws_ami.cnp_ami.id
   instance_type = var.types.cnp
   key_name = var.key_pair
-  #iam_instance_profile = 
   
   network_interface {
     network_interface_id = aws_network_interface.cnp_mgmt.id
@@ -752,10 +807,43 @@ resource "aws_instance" "cnp_1" {
     device_index = 2
   }
   
+  user_data = <<-EOF
+    # -- START VTPS CLI
+    edit
+    virtual-segments
+    virtual-segment "cloud formation"
+    move to position 1
+    ips-profile "Default IPS Profile"
+    reputation-profile "Default Reputation Profile"
+    address ${aws_network_interface.cnp_1a.private_ip}/24 ${aws_network_interface.cnp_1b.private_ip}/24
+    route 0.0.0.0/0 ${cidrhost(aws_subnet.insp_san_sub.cidr_block, 1)}
+    bind in-port 1A out-port 1B
+    bind in-port 1B out-port 1A
+    exit
+    commit
+    exit
+    high-availability
+    cloudwatch-health period 1
+    commit
+    exit
+    exit
+    save-config -y
+    sms register ${var.sms_api_key} ${aws_instance.sms_host.private_ip} threatdv throughput 1000
+    # -- END VTPS CLI
+  EOF
+  
   tags = {
     Name = format("%s - %s", var.unique_id, "CNP Instance")
     Description = "Cloud Network Protection Instance"
   }
+}
+
+output "sms_public_ip" {
+  value = aws_instance.sms_host.public_ip
+}
+
+output "sms_private_ip" {
+  value = aws_instance.sms_host.private_ip
 }
 
 output "bastion_public_ip" {
@@ -771,13 +859,13 @@ output "workload_ip" {
 }
 
 output "cnp_mgmt_ip" {
-  value = aws_network_interface.cnp_mgmt.private_ips
+  value = aws_network_interface.cnp_mgmt.private_ip
 }
 
 output "cnp_1A_ip" {
-  value = aws_network_interface.cnp_1a.private_ips
+  value = aws_network_interface.cnp_1a.private_ip
 }
 
 output "cnp_1B_ip" {
-  value = aws_network_interface.cnp_1b.private_ips
+  value = aws_network_interface.cnp_1b.private_ip
 }

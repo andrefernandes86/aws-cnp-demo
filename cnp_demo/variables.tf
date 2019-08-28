@@ -6,10 +6,27 @@ variable "key_pair" {
   type = string
 }
 
+variable "private_key_file" {
+  type = string
+}
+
 variable "region" {
   type    = string
   default = "us-east-1"
 }
+
+variable "sms_api_key" {
+  type = string
+}
+
+variable "sms_private_ip" {
+  type = string
+}
+
+variable "sms_ami_id" {
+  type = string
+}
+
 
 /*
 variable "cloudwatch_logs_policy" {

@@ -5,11 +5,20 @@ $ export AWS_SECRET_ACCESS_KEY="asecretkey"
 */
 
 #Set a unique identifier which will be added to any tags
-unique_id = "BHDEMO"
+unique_id = "AWGCNPDEMO"
 #All Ubuntu Server AMIs per region
 region = "us-east-2"
-
+#The name of the keypair you will use to connect to the instances.  This keypair must exist in the region
 key_pair = "cnp_demo_keys"
+#Provide the full path to your private key file that corresponds to the keypair you specified above.
+private_key_file = "/Users/adamg/src/terraform/cnp_demo/cnp_demo_keys.pem"
+#
+#-------DO NOT CHANGE ANY MORE UNLESS YOU KNOW WHAT YOU ARE DOING------
+sms_api_key = "50AF8165-62FB-4D02-BBBC-EB98A343C8CF"
+
+sms_private_ip = "10.0.0.20"
+
+sms_ami_id = "ami-084ffcf0cecf53d7b"
 
 #All CNP AMIs per region
 cnp_amis = {
@@ -22,6 +31,7 @@ types = {
   bastion = "t2.micro"
   work = "t2.micro"
   cnp = "c5.2xlarge"
+  sms = "t2.large"
 }
 
 #Internet VPC specific values
@@ -34,6 +44,7 @@ inet_vpc = {
   conn_sub_cidr = "10.0.1.0/24"
   conn_sub_name = "Internet VPC - Connection Subnet"
   auto_pub_ip = true
+  sms_private_ip = "10.0.0.20"
 }
 
 #Inspection VPC specific values
