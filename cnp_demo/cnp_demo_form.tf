@@ -688,10 +688,7 @@ resource "aws_instance" "bastion_host" {
   
   provisioner "remote-exec" {
     inline = [<<-EOF
-      #setup docker containers for vulnerable apps
-      "curl -sSL https://get.docker.com/ | sh"
-      "docker run -d -p 8080:80 --name lab-sql-injection vulnerables/web-dvwa"
-      "docker run -d -p 8081:8080 --name lab-apache-struts jrrdev/cve-2017-5638"
+
       #test if SMS is up and fully initialized
       curl -k -m 800 --connect-timeout 10 --retry 40 --retry-delay 15 --retry-connrefused -X GET --header "Accept: application/json" --header "X-SMS-API-KEY: ${var.sms_api_key}" "https://${aws_instance.sms_host.private_ip}/services/v1/dv_package?active=true&type=DV" 
       sleep 20
@@ -723,10 +720,13 @@ resource "aws_instance" "work_host" {
   vpc_security_group_ids = [aws_security_group.work_vpc_sg.id]
   subnet_id = aws_subnet.work_sub.id
   
-/*
   provisioner "remote-exec" {
     inline = [<<-EOF
       #create DVWA container
+      #setup docker containers for vulnerable apps
+      "curl -sSL https://get.docker.com/ | sh"
+      "docker run -d -p 8080:80 --name lab-sql-injection vulnerables/web-dvwa"
+      "docker run -d -p 8081:8080 --name lab-apache-struts jrrdev/cve-2017-5638"
       
       EOF
     ]
@@ -737,9 +737,8 @@ resource "aws_instance" "work_host" {
       host = aws_instance.bastion_host.public_ip
       private_key = file(var.private_key_file)
       agent = false
-    }*/
-
-  #}
+    }
+  }
   
   tags = {
     Name = format("%s - %s", var.unique_id, "Workload instance")
