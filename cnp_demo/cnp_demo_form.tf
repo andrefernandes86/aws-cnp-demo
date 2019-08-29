@@ -865,8 +865,8 @@ resource "aws_instance" "cnp_1" {
   }
 }
 
-output "sms_public_ip" {
-  value = aws_instance.sms_host.public_ip
+output "sms_public_URL" {
+  value = format("https://%s", aws_instance.sms_host.public_ip)
 }
 
 output "sms_private_ip" {
