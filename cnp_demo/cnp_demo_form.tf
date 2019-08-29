@@ -854,7 +854,7 @@ resource "aws_instance" "cnp_1" {
     exit
     exit
     save-config -y
-    sms register ${var.sms_api_key} ${aws_instance.sms_host.private_ip} threatdv throughput 1000
+    sms register ${var.sms_api_key} ${aws_instance.sms_host.private_ip} threatdv throughput 3000
     # -- END VTPS CLI
   EOF
   
