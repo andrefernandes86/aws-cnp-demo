@@ -674,6 +674,7 @@ resource "aws_instance" "sms_host" {
   tags = {
     Name = format("%s - %s", var.unique_id, "SMS 5.2 instance")
     Description = "SMS 5.2 instance"
+    Created = timestamp()
   }
 }
 
@@ -684,10 +685,13 @@ resource "aws_instance" "bastion_host" {
   key_name = var.key_pair
   vpc_security_group_ids = [aws_security_group.inet_pub_vpc_sg.id]
   subnet_id = aws_subnet.inet_pub_sub.id
-  source_dest_check = false
   
   provisioner "remote-exec" {
     inline = [<<-EOF
+      #setup docker containers for vulnerable apps
+      "curl -sSL https://get.docker.com/ | sh"
+      "docker run -d -p 8080:80 --name lab-sql-injection vulnerables/web-dvwa"
+      "docker run -d -p 8081:8080 --name lab-apache-struts jrrdev/cve-2017-5638"
       #test if SMS is up and fully initialized
       curl -k -m 800 --connect-timeout 10 --retry 40 --retry-delay 15 --retry-connrefused -X GET --header "Accept: application/json" --header "X-SMS-API-KEY: ${var.sms_api_key}" "https://${aws_instance.sms_host.private_ip}/services/v1/dv_package?active=true&type=DV" 
       sleep 20
@@ -708,6 +712,7 @@ resource "aws_instance" "bastion_host" {
   tags = {
     Name = format("%s - %s", var.unique_id, "Bastion instance")
     Description = "Bastion instance"
+    Created = timestamp()
   }
 }
 
@@ -739,6 +744,7 @@ resource "aws_instance" "work_host" {
   tags = {
     Name = format("%s - %s", var.unique_id, "Workload instance")
     Description = "Workload instance"
+    Created = timestamp()
   }
 }
 
@@ -855,6 +861,7 @@ resource "aws_instance" "cnp_1" {
   tags = {
     Name = format("%s - %s", var.unique_id, "CNP Instance")
     Description = "Cloud Network Protection Instance"
+    Created = timestamp()
   }
 }
 
