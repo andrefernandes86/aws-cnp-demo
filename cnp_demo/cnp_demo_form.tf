@@ -693,6 +693,7 @@ resource "aws_instance" "bastion_host" {
       curl -k -m 800 --connect-timeout 10 --retry 40 --retry-delay 15 --retry-connrefused -X GET --header "Accept: application/json" --header "X-SMS-API-KEY: ${var.sms_api_key}" "https://${aws_instance.sms_host.private_ip}/services/v1/dv_package?active=true&type=DV" 
       sleep 20
       echo "The SMS has started and is responding to API calls"
+      
       EOF
     ]
     
@@ -724,9 +725,9 @@ resource "aws_instance" "work_host" {
     inline = [<<-EOF
       #create DVWA container
       #setup docker containers for vulnerable apps
-      "curl -sSL https://get.docker.com/ | sh"
-      "docker run -d -p 8080:80 --name lab-sql-injection vulnerables/web-dvwa"
-      "docker run -d -p 8081:8080 --name lab-apache-struts jrrdev/cve-2017-5638"
+      curl -sSL https://get.docker.com/ | sh
+      docker run -d -p 8080:80 --name lab-sql-injection vulnerables/web-dvwa
+      docker run -d -p 8081:8080 --name lab-apache-struts jrrdev/cve-2017-5638
       
       EOF
     ]
