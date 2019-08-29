@@ -688,9 +688,10 @@ resource "aws_instance" "bastion_host" {
   
   provisioner "remote-exec" {
     inline = [<<-EOF
-        curl -k -m 800 --connect-timeout 10 --retry 40 --retry-delay 15 --retry-connrefused -X GET --header "Accept: application/json" --header "X-SMS-API-KEY: ${var.sms_api_key}" "https://${aws_instance.sms_host.private_ip}/services/v1/dv_package?active=true&type=DV" 
-        sleep 20
-        echo "The SMS has started and is responding to API calls"
+      #test if SMS is up and fully initialized
+      curl -k -m 800 --connect-timeout 10 --retry 40 --retry-delay 15 --retry-connrefused -X GET --header "Accept: application/json" --header "X-SMS-API-KEY: ${var.sms_api_key}" "https://${aws_instance.sms_host.private_ip}/services/v1/dv_package?active=true&type=DV" 
+      sleep 20
+      echo "The SMS has started and is responding to API calls"
       EOF
     ]
     
@@ -716,6 +717,25 @@ resource "aws_instance" "work_host" {
   key_name = var.key_pair
   vpc_security_group_ids = [aws_security_group.work_vpc_sg.id]
   subnet_id = aws_subnet.work_sub.id
+  
+/*
+  provisioner "remote-exec" {
+    inline = [<<-EOF
+      #create DVWA container
+      
+      EOF
+    ]
+    connection {
+      type = "ssh"
+      user = "ubuntu"
+      timeout = "2m"
+      host = aws_instance.bastion_host.public_ip
+      private_key = file(var.private_key_file)
+      agent = false
+    }*/
+
+  #}
+  
   tags = {
     Name = format("%s - %s", var.unique_id, "Workload instance")
     Description = "Workload instance"

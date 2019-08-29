@@ -14,11 +14,11 @@ key_pair = "cnp_demo_keys"
 private_key_file = "/Users/adamg/src/terraform/cnp_demo/cnp_demo_keys.pem"
 #
 #-------DO NOT CHANGE ANY MORE UNLESS YOU KNOW WHAT YOU ARE DOING------
-sms_api_key = "50AF8165-62FB-4D02-BBBC-EB98A343C8CF"
+sms_api_key = "B57550F2-36C2-4569-A3F7-1A6A03E97FCB"
 
 sms_private_ip = "10.0.0.20"
 
-sms_ami_id = "ami-084ffcf0cecf53d7b"
+sms_ami_id = "ami-090335f57f469f63f"
 
 #All CNP AMIs per region
 cnp_amis = {
