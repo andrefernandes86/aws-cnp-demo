@@ -12,6 +12,9 @@ region = "us-east-2"
 key_pair = "cnp_demo_keys"
 #Provide the full path to your private key file that corresponds to the keypair you specified above.
 private_key_file = "/Users/adamg/src/terraform/cnp_demo/cnp_demo_keys.pem"
+#License speed to request from SMS when CNP instance is registered
+#valid values are 1000,3000,5000,10000
+cnp1_license_speed = "10000"
 #
 #-------DO NOT CHANGE ANY MORE UNLESS YOU KNOW WHAT YOU ARE DOING------
 sms_api_key = "B57550F2-36C2-4569-A3F7-1A6A03E97FCB"
@@ -63,6 +66,7 @@ insp_vpc = {
 #Workload VPC specific values
 work_vpc = {
   cidr = "192.168.152.0/24"
+  work1_private_ip = "192.168.152.50"
   name = "work_vpc"
   desc = "Workload VPC"
   sub_cidr = "192.168.152.0/24"

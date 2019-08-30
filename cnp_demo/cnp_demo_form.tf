@@ -720,14 +720,15 @@ resource "aws_instance" "work_host" {
   key_name = var.key_pair
   vpc_security_group_ids = [aws_security_group.work_vpc_sg.id]
   subnet_id = aws_subnet.work_sub.id
+  private_ip = var.work_vpc.work1_private_ip
   
   provisioner "remote-exec" {
     inline = [<<-EOF
       #create DVWA container
       #setup docker containers for vulnerable apps
       curl -sSL https://get.docker.com/ | sh
-      docker run -d -p 8080:80 --name lab-sql-injection vulnerables/web-dvwa
-      docker run -d -p 8081:8080 --name lab-apache-struts jrrdev/cve-2017-5638
+      docker run -d -p 8080:8080 --name lab-sql-injection vulnerables/web-dvwa
+      docker run -d -p 8000:80 --name lab-apache-struts jrrdev/cve-2017-5638
       
       EOF
     ]
@@ -854,7 +855,7 @@ resource "aws_instance" "cnp_1" {
     exit
     exit
     save-config -y
-    sms register ${var.sms_api_key} ${aws_instance.sms_host.private_ip} threatdv throughput 3000
+    sms register ${var.sms_api_key} ${aws_instance.sms_host.private_ip} threatdv throughput ${var.cnp1_license_speed}
     # -- END VTPS CLI
   EOF
   
