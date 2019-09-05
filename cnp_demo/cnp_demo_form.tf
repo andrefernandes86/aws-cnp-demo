@@ -727,8 +727,8 @@ resource "aws_instance" "work_host" {
       #create DVWA container
       #setup docker containers for vulnerable apps
       curl -sSL https://get.docker.com/ | sh
-      docker run -d -p 8080:8080 --name lab-sql-injection vulnerables/web-dvwa
-      docker run -d -p 8000:80 --name lab-apache-struts jrrdev/cve-2017-5638
+      sudo docker run -d -p 8080:8080 --name lab-sql-injection vulnerables/web-dvwa
+      sudo docker run -d -p 8000:80 --name lab-apache-struts jrrdev/cve-2017-5638
       
       EOF
     ]
