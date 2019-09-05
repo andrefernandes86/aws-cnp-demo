@@ -16,7 +16,7 @@ private_key_file = "/Users/adamg/src/terraform/cnp_demo/cnp_demo_keys.pem"
 #valid values are 1000,3000,5000,10000
 cnp1_license_speed = "10000"
 #Use the SMS API key provided on the internal wiki page
-sms_api_key = "B57550F2-36C2-4569-A3F7-1A6A03E97FCB"
+sms_api_key = ""
 #
 #-------DO NOT CHANGE ANY MORE UNLESS YOU KNOW WHAT YOU ARE DOING------
 
