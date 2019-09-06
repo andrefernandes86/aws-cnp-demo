@@ -17,7 +17,7 @@ private_key_file = "~/code/terraform/cnp_demo_keys.pem"
 #private_key_file = "~/code/terraform/Demo.pem"
 #
 #-------DO NOT CHANGE ANY MORE UNLESS YOU KNOW WHAT YOU ARE DOING------
-sms_api_key = "B57550F2-36C2-4569-A3F7-1A6A03E97FCB"
+sms_api_key = ""
 
 sms_private_ip = "10.0.0.20"
 
