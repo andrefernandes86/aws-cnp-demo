@@ -751,39 +751,15 @@ EOT
 resource "aws_instance" "work_host" {
   ami = data.aws_ami.ubuntu_server_ami.id
   instance_type = var.types.work
-  user_data = <<-EOF
+  user_data = <<EOF
 #!/bin/bash
 sudo apt update -y && sudo apt install -y docker.io
 sudo docker run -d -p ${var.struts_port}:${var.struts_port} --name lab-apache-struts jrrdev/cve-2017-5638
+echo "[+] - installed struts container"
 EOF
   key_name = var.key_pair
   vpc_security_group_ids = [aws_security_group.work_vpc_sg.id]
   subnet_id = aws_subnet.work_sub.id
-<<<<<<< HEAD
-=======
-  private_ip = var.work_vpc.work1_private_ip
-  
-  provisioner "remote-exec" {
-    inline = [<<-EOF
-      #create DVWA container
-      #setup docker containers for vulnerable apps
-      curl -sSL https://get.docker.com/ | sh
-      sudo docker run -d -p 8080:8080 --name lab-sql-injection vulnerables/web-dvwa
-      sudo docker run -d -p 8000:80 --name lab-apache-struts jrrdev/cve-2017-5638
-      
-      EOF
-    ]
-    connection {
-      type = "ssh"
-      user = "ubuntu"
-      timeout = "2m"
-      host = aws_instance.bastion_host.public_ip
-      private_key = file(var.private_key_file)
-      agent = false
-    }
-  }
-  
->>>>>>> c71ae93d9696570926220d67f2a846bf6b4ba1c3
   tags = {
     Name        = format("%s - %s", var.unique_id, "Workload instance")
     Description = "Workload instance"
@@ -934,12 +910,6 @@ resource "aws_iam_role" "cnp_logs_role" {
       value = aws_network_interface.cnp_1a.private_ip
     }
 
-<<<<<<< HEAD
     output "cnp_1B_ip" {
       value = aws_network_interface.cnp_1b.private_ip
     }
-=======
-output "cnp_1B_ip" {
-  value = aws_network_interface.cnp_1b.private_ip
-}
->>>>>>> c71ae93d9696570926220d67f2a846bf6b4ba1c3
