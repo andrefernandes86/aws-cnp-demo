@@ -885,6 +885,10 @@ resource "aws_iam_role" "cnp_logs_role" {
     output "sms_public_ip" {
       value = aws_instance.sms_host.public_ip
     }
+    
+    output "sms_web_interface" {
+      value = format("https://%s", aws_instance.sms_host.public_ip)
+    }
 
     output "sms_private_ip" {
       value = aws_instance.sms_host.private_ip
@@ -892,6 +896,10 @@ resource "aws_iam_role" "cnp_logs_role" {
 
     output "bastion_public_ip" {
       value = aws_instance.bastion_host.public_ip
+    }
+    
+    output "bastion_attack_website" {
+      value = format("http://%s:5000", aws_instance.bastion_host.public_ip)
     }
 
     output "bastion_private_ip" {
