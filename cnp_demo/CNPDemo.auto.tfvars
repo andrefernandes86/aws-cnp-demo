@@ -10,15 +10,17 @@ unique_id = "CNPDEMO"
 region = "us-east-2" # us-east2 (original)
 #region = "us-east-1"
 #The name of the keypair you will use to connect to the instances.  This keypair must exist in the region
-key_pair = "cnp_demo_keys"
+key_pair = "<key_pair_name_in_aws>"
 #key_pair = "Demo"
 #Provide the full path to your private key file that corresponds to the keypair you specified above.
-private_key_file = "~/code/terraform/cnp_demo_keys.pem" 
+private_key_file = "<path_to_your_private_key_file>" 
 #private_key_file = "~/code/terraform/Demo.pem"
-#
-#-------DO NOT CHANGE ANY MORE UNLESS YOU KNOW WHAT YOU ARE DOING------
+#Provide the SMS API key from the wiki page that describes how to use this Terraform template
 sms_api_key = ""
 
+#
+#-------DO NOT CHANGE ANY MORE UNLESS YOU KNOW WHAT YOU ARE DOING------
+#
 sms_private_ip = "10.0.0.20"
 
 struts_port = "8080"
