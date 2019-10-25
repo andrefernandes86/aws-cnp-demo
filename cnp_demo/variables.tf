@@ -1,13 +1,11 @@
-variable "unique_id" {
-  type = string
-}
-
 variable "key_pair" {
-  type = string
+  type        = string
+  description = "The name of the keypair you will use to connect to the instances.  This keypair must exist in the region"
 }
 
 variable "private_key_file" {
-  type = string
+  type        = string
+  description = "Provide the full path to your private key file that corresponds to the keypair you specified above."
 }
 
 variable "region" {
@@ -16,7 +14,8 @@ variable "region" {
 }
 
 variable "sms_api_key" {
-  type = string
+  type        = string
+  description = "Provide the SMS API key from the wiki page that describes how to use this Terraform template"
 }
 
 variable "sms_private_ip" {
