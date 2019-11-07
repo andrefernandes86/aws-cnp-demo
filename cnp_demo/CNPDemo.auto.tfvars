@@ -9,14 +9,6 @@ unique_id = "CNPDEMO"
 #All Ubuntu Server AMIs per region
 region = "us-east-2" # us-east2 (original)
 #region = "us-east-1"
-#The name of the keypair you will use to connect to the instances.  This keypair must exist in the region
-key_pair = "<key_pair_name_in_aws>"
-#key_pair = "Demo"
-#Provide the full path to your private key file that corresponds to the keypair you specified above.
-private_key_file = "<path_to_your_private_key_file>" 
-#private_key_file = "~/code/terraform/Demo.pem"
-#Provide the SMS API key from the wiki page that describes how to use this Terraform template
-sms_api_key = ""
 
 #
 #-------DO NOT CHANGE ANY MORE UNLESS YOU KNOW WHAT YOU ARE DOING------

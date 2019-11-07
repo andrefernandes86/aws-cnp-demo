@@ -9,8 +9,6 @@ unique_id = "BHDEMO"
 #All Ubuntu Server AMIs per region
 region = "us-east-2"
 
-key_pair = "cnp_demo_keys"
-
 customer_gw_ip = "4.14.202.50"
 
 #All CNP AMIs per region
