@@ -1,3 +1,8 @@
+variable "unique_id" {
+  type        = string
+  description = "A unique string that will be prepended to Name tags for all craeated resources"
+}
+
 variable "key_pair" {
   type        = string
   description = "The name of the keypair you will use to connect to the instances.  This keypair must exist in the region"
