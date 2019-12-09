@@ -752,10 +752,17 @@ resource "aws_instance" "work_host" {
   ami = data.aws_ami.ubuntu_server_ami.id
   instance_type = var.types.work
   user_data = <<EOF
-#!/bin/bash
-sudo apt update -y && sudo apt install -y docker.io
-sudo docker run -d -p ${var.struts_port}:${var.struts_port} --name lab-apache-struts jrrdev/cve-2017-5638
-echo "[+] - installed struts container"
+  #cloud-config
+  repo_update: true
+  repo_upgrade: all
+
+  packages:
+   - nginx
+
+  runcmd:
+    - curl -fsSL https://get.docker.com -o get-docker.sh; sh get-docker.sh
+    - [ sh, -c, "sudo docker run -d -p 8080:8080 --name lab-apache-struts jrrdev/cve-2017-5638" ]
+    - systemctl status nginx
 EOF
   key_name = var.key_pair
   vpc_security_group_ids = [aws_security_group.work_vpc_sg.id]
