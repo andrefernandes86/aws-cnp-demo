@@ -761,7 +761,7 @@ resource "aws_instance" "work_host" {
 
   runcmd:
     - curl -fsSL https://get.docker.com -o get-docker.sh; sh get-docker.sh
-    - [ sh, -c, "sudo docker run -d -p 8080:8080 --name lab-apache-struts jrrdev/cve-2017-5638" ]
+    - [ sh, -c, "sudo docker run -d -p ${var.struts_port}:${var.struts_port} --name lab-apache-struts jrrdev/cve-2017-5638" ]
     - systemctl status nginx
 EOF
   key_name = var.key_pair
