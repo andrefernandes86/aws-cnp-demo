@@ -762,6 +762,8 @@ resource "aws_instance" "work_host" {
   runcmd:
     - curl -fsSL https://get.docker.com -o get-docker.sh; sh get-docker.sh
     - [ sh, -c, "sudo docker run -d -p ${var.struts_port}:${var.struts_port} --name lab-apache-struts jrrdev/cve-2017-5638" ]
+    - [ sh, -c, "sudo apt install -y nginx"]
+    - [ sh, -c, "cd /var/www/html ; sudo truncate -s 3G myfile.data"]
     - systemctl status nginx
 EOF
   key_name = var.key_pair
@@ -907,6 +909,14 @@ resource "aws_iam_role" "cnp_logs_role" {
     
     output "bastion_attack_website" {
       value = format("http://%s:5000", aws_instance.bastion_host.public_ip)
+    }
+
+    output "bastion_download_file_command" {
+      value = format("wget --limit-rate 20M -O /dev/null http://%s/myfile.data", aws_instance.work_host.private_ip)
+    }
+
+    output "bastion_ping_workload_command" {
+      value = format("ping %s", aws_instance.work_host.private_ip)
     }
 
     output "bastion_private_ip" {
